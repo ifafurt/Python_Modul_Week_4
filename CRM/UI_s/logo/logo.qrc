@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="logo">
+    <file>logo_butun.png</file>
+    <file>logo_icon.png</file>
+  </qresource>
+</RCC>

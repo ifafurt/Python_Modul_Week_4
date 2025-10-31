@@ -1,0 +1,15 @@
+pyuic6 -x Splash_Screen.ui -o Splash_Screen.py
+
+pyuic6 -x Admin_Menu.ui -o Admin_Menu.py
+
+pyuic6 -x Applications.ui -o Applications.py
+
+pyuic6 -x Interviews.ui -o Interviews.py
+
+pyuic6 -x Login_Window.ui -o Login_Window.py
+
+pyuic6 -x Mentor_Meeting_Page.ui -o Mentor_Meeting_Page.py
+
+pyuic6 -x Preference_Admin_Menu.ui -o Preference_Admin_Menu.py
+
+pyuic6 -x Preference_Menu.ui -o Preference_Menu.py
