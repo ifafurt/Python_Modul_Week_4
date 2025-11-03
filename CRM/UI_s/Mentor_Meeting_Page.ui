@@ -1,1 +1,385 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1000</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1000</width>
+    <height>600</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1000</width>
+    <height>600</height>
+   </size>
+  </property>
+  <property name="font">
+   <font>
+    <family>Nirmala UI</family>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>Mentor Meeting Page</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="logo/logo.qrc">
+    <normaloff>:/logo/logo_icon.png</normaloff>:/logo/logo_icon.png</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">#Form{
+background-color: qconicalgradient(cx:0.114, cy:0.113318, angle:134.3, stop:0 rgba(214, 28, 30, 255), stop:1 rgba(255, 255, 255, 255));}</string>
+  </property>
+  <widget class="QLabel" name="label_APPLICATIONS">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>20</y>
+     <width>981</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Nirmala UI</family>
+     <pointsize>30</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(214, 30, 32);</string>
+   </property>
+   <property name="text">
+    <string>MENTOR MEETING PAGE</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_SEARCH">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>120</y>
+     <width>141</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Nirmala UI</family>
+     <pointsize>15</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{
+	color: rgb(214, 30, 32);
+	background-color: rgb(253, 253, 253);
+}
 
+QPushButton::hover{
+	background-color: rgb(226, 92, 93);
+	color: rgb(255, 255, 255);
+}
+
+QPushButton::pressed{
+	background-color: rgb(216, 37, 39);
+}</string>
+   </property>
+   <property name="text">
+    <string>SEARCH</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_Return_REFERENCE_menu">
+   <property name="geometry">
+    <rect>
+     <x>670</x>
+     <y>120</y>
+     <width>271</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Nirmala UI</family>
+     <pointsize>15</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{
+	color: rgb(214, 30, 32);
+	background-color: rgb(253, 253, 253);
+}
+
+QPushButton::hover{
+	background-color: rgb(226, 92, 93);
+	color: rgb(255, 255, 255);
+}
+
+QPushButton::pressed{
+	background-color: rgb(216, 37, 39);
+}</string>
+   </property>
+   <property name="text">
+    <string>RETURN PREFERENCE MENU</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_ALL_MEETINGS">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>180</y>
+     <width>141</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Nirmala UI</family>
+     <pointsize>15</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{
+	color: rgb(214, 30, 32);
+	background-color: rgb(253, 253, 253);
+}
+
+QPushButton::hover{
+	background-color: rgb(226, 92, 93);
+	color: rgb(255, 255, 255);
+}
+
+QPushButton::pressed{
+	background-color: rgb(216, 37, 39);
+}</string>
+   </property>
+   <property name="text">
+    <string>ALL MEETINGS</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit">
+   <property name="geometry">
+    <rect>
+     <x>230</x>
+     <y>120</y>
+     <width>421</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>15</pointsize>
+     <italic>true</italic>
+    </font>
+   </property>
+   <property name="focusPolicy">
+    <enum>Qt::ClickFocus</enum>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border-style:solid;
+border-width:3px;
+border-radius:20px;
+border-color: rgb(218, 30, 60);
+color: rgb(104, 104, 104);
+background-color: rgb(255, 255, 255);
+border-color: rgb(220, 63, 65);</string>
+   </property>
+   <property name="placeholderText">
+    <string>Enter the text you want to search for here</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_EXIT">
+   <property name="geometry">
+    <rect>
+     <x>670</x>
+     <y>180</y>
+     <width>271</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Nirmala UI</family>
+     <pointsize>15</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="layoutDirection">
+    <enum>Qt::LeftToRight</enum>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{
+	color: rgb(214, 30, 32);
+	background-color: rgb(253, 253, 253);
+}
+
+QPushButton::hover{
+	background-color: rgb(226, 92, 93);
+	color: rgb(255, 255, 255);
+}
+
+QPushButton::pressed{
+	background-color: rgb(216, 37, 39);
+}</string>
+   </property>
+   <property name="text">
+    <string>EXIT</string>
+   </property>
+  </widget>
+  <widget class="QTableWidget" name="tableWidget">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>250</y>
+     <width>871</width>
+     <height>321</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color:rgb(255, 255, 255)</string>
+   </property>
+   <attribute name="horizontalHeaderCascadingSectionResizes">
+    <bool>false</bool>
+   </attribute>
+   <attribute name="horizontalHeaderDefaultSectionSize">
+    <number>144</number>
+   </attribute>
+   <attribute name="horizontalHeaderMinimumSectionSize">
+    <number>54</number>
+   </attribute>
+   <attribute name="horizontalHeaderStretchLastSection">
+    <bool>true</bool>
+   </attribute>
+   <column>
+    <property name="text">
+     <string>Meeting Date</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Period</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Full Name</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Mentor</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Evaluation</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Current Status</string>
+    </property>
+   </column>
+  </widget>
+  <widget class="QComboBox" name="comboBox">
+   <property name="geometry">
+    <rect>
+     <x>230</x>
+     <y>180</y>
+     <width>421</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+    font-size: 16px;
+    font-weight: bold;
+    font-family: Arial;
+    color: black; /* Siyah yazı rengi */
+   
+	background-color: rgb(255, 255, 255);
+    border-radius: 8px; /* Köşe yuvarlama */
+    padding: 8px; /* Küçük padding */
+    border: none;
+    
+    /* Gölgelendirme eklemek için: */
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3); /* Gölgenin boyutu ve rengi */
+}
+
+QPushButton:hover {
+    background-color: #c0c0c0; /* Hover durumunda biraz daha koyu gri */
+    /* Hover durumunda gölgeyi değiştirmek için */
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5); /* Hover sırasında daha belirgin gölge */
+}
+</string>
+   </property>
+   <item>
+    <property name="text">
+     <string>It is appropriate to participate in the entire VIT project</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>It is appropriate to receive initial IT training within the VIT project and be directed to ITPH</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>It is appropriate to receive English training within the VIT project and be directed to ITPH</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>It is appropriate to be directly directed to ITPH within the scope of the VIT project</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>It is appropriate to be directed to a job through individual coaching</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>It would be more appropriate to participate in the next VIT project</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Should be directed to another sector</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Other</string>
+    </property>
+   </item>
+  </widget>
+ </widget>
+ <resources>
+  <include location="logo/logo.qrc"/>
+ </resources>
+ <connections/>
+</ui>
