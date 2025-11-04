@@ -16,6 +16,31 @@ class ApplicationsWindow(BaseWindow):
         super().__init__()
         self.role = role
         loadUi(os.path.join(UI_DIR, "Applications.ui"), self)
+        self.table_columns = [
+                "DATE",
+                "FULL NAME",
+                "E-MAIL",
+                "PHONE NUMBER",
+                "POSTAL CODE",
+                "PROVINCE",
+                "CURRENT STATUS"
+            ]
+        
+        # Tabloda gösterilecek sütunlar ve Excel karşılıkları
+        self.column_mapping = {
+            "DATE": "Zaman damgası",
+            "FULL NAME": "Adınız Soyadınız",
+            "E-MAIL": "Mail adresiniz",
+            "PHONE NUMBER": "Telefon Numaranız",
+            "POSTAL CODE": "Posta Kodunuz",
+            "PROVINCE": "Yaşadığınız Eyalet",
+            "CURRENT STATUS": "Şu anki durumunuz"
+        }
+
+        # UI'da gösterilecek sütun sırası
+        self.table_columns = list(self.column_mapping.keys())
+
+
         self.setWindowTitle("Applications")
         self.setFixedSize(1000, 600)
         self.move_to_last_position()
@@ -43,23 +68,42 @@ class ApplicationsWindow(BaseWindow):
     # ---------------- Fonksiyonlar ---------------- #
 
     def display_data(self, df):
-        """DataFrame'i tabloya yazdır."""
-        self.tableWidget.clearContents()  # önceki içerikleri temizle
-        self.tableWidget.setRowCount(0)   # satır sayısını sıfırla
-        if df.empty:
-            print("Gösterilecek kayıt yok.")
-            return
-        df = df.reset_index(drop=True)  # ← indeksleri sıfırla
-        self.tableWidget.setRowCount(len(df))
-        self.tableWidget.setColumnCount(len(df.columns))
-        self.tableWidget.setHorizontalHeaderLabels(df.columns)
-        for row_idx, row in df.iterrows():
-            for col_idx, value in enumerate(row):
-                item = QTableWidgetItem(str(value))
-                item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                self.tableWidget.setItem(row_idx, col_idx, item)
+        """DataFrame'i tabloya yazdır — sadece UI'de tanımlı sütunları gösterir."""
+        try:
+            self.tableWidget.clearContents()
+            self.tableWidget.setRowCount(0)
 
-    
+            if df is None or df.empty:
+                print(" Gösterilecek kayıt yok veya DataFrame boş.")
+                return
+
+            # Sadece mapping'teki Excel sütunlarını al, sıralı olarak UI başlıklarına koy
+            display_df = pd.DataFrame()
+            for ui_col in self.table_columns:
+                excel_col = self.column_mapping[ui_col]
+                if excel_col not in df.columns:
+                    print(f" Hata: '{excel_col}' sütunu DataFrame'de bulunamadı.")
+                    return
+                display_df[ui_col] = df[excel_col]
+
+            display_df = display_df.reset_index(drop=True)
+
+            self.tableWidget.setRowCount(len(display_df))
+            self.tableWidget.setColumnCount(len(self.table_columns))
+            self.tableWidget.setHorizontalHeaderLabels(self.table_columns)
+
+            for row_idx, row in display_df.iterrows():
+                for col_idx, value in enumerate(row):
+                    item = QTableWidgetItem(str(value))
+                    item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                    self.tableWidget.setItem(row_idx, col_idx, item)
+
+            print(f" {len(display_df)} kayıt tabloya yüklendi.\n")
+
+        except Exception as e:
+            print(f"display_data() Hatası: {e}")
+
+
     def search_applications(self):
         """Arama fonksiyonu: lineEdit içindeki metin ile isim/soyisim araması."""
         try:
@@ -91,18 +135,21 @@ class ApplicationsWindow(BaseWindow):
 
     def load_all_applications(self):
         """Tüm başvuruları tabloya yazdır."""
+        print("Tüm başvurular yükleniyor...")
+        print(f"Toplam kayıt sayısı: {len(self.df)}")
         self.display_data(self.df)
+        print("Tüm başvurular görüntülendi.\n")
 
     def show_defined_mentor(self):
         if 'Mentor gorusmesi' in self.df.columns:
             filtered_df = self.df[self.df['Mentor gorusmesi'] == 'OK']
-            print(f"Mentoru atanmış adaylar: {len(filtered_df)} kayıt bulundu.")
+            print(f"Mentoru atanmış adaylar filtrelendi: {len(filtered_df)} kayıt bulundu.")
             self.display_data(filtered_df)
 
     def show_undefined_mentor(self):
         if 'Mentor gorusmesi' in self.df.columns:
             filtered_df = self.df[self.df['Mentor gorusmesi'] == 'ATANMADI']
-            print(f"Mentoru atanmamış adaylar: {len(filtered_df)} kayıt bulundu.")
+            print(f"Mentoru atanmamış adaylar filtrelendi: {len(filtered_df)} kayıt bulundu.")
             self.display_data(filtered_df)
 
 
@@ -110,13 +157,15 @@ class ApplicationsWindow(BaseWindow):
         """Aynı isim ve e-posta ile kayıtlı adayları göster."""
         if all(col in self.df.columns for col in ['Adınız Soyadınız', 'Mail adresiniz']):
             duplicates = self.df[self.df.duplicated(subset=['Adınız Soyadınız', 'Mail adresiniz'], keep=False)]
+            print(f"Mükerrer kayıtlar bulundu: {len(duplicates)}")
             self.display_data(duplicates)
 
     def filter_applications(self):
         """Duplicate kayıtları filtrele ve sadece tekil göster."""
         if all(col in self.df.columns for col in ['Adınız Soyadınız', 'Mail adresiniz']):
-            filtered = self.df.drop_duplicates(subset=['Adınız Soyadınız', 'Mail adresiniz'])
+            filtered = self.df.drop_duplicates(subset=['Adınız Soyadınız', 'Mail adresiniz'], keep='first')
             self.display_data(filtered)
+            print("Tekil kayıtlar başarıyla listelendi.\n")
 
     def show_previous_vit(self):
         """VIT1 veya VIT2 ile ortak adayları göster."""
@@ -126,6 +175,7 @@ class ApplicationsWindow(BaseWindow):
             return
         vit_all = pd.concat([self.vit1_df, self.vit2_df], ignore_index=True)
         common = self.df.merge(vit_all, how='inner', on=['Adınız Soyadınız', 'Mail adresiniz'])
+        print(f"VIT1/VIT2 ile ortak kayıtlar bulundu: {len(common)}")
         self.display_data(common)
 
     def show_different(self):
@@ -137,6 +187,7 @@ class ApplicationsWindow(BaseWindow):
         vit_all = pd.concat([self.vit1_df, self.vit2_df], ignore_index=True)
         different = self.df.merge(vit_all, how='left', on=['Adınız Soyadınız', 'Mail adresiniz'], indicator=True)
         different = different[different['_merge'] == 'left_only'].drop(columns=['_merge'])
+        print(f"VIT1/VIT2’de olmayan adaylar: {len(different)}")
         self.display_data(different)
 
     def return_to_menu(self):
