@@ -13,7 +13,6 @@ class ApplicationsWindow(BaseWindow):
         loadUi(os.path.join(UI_DIR, "Applications.ui"), self)
         self.setWindowTitle("Applications")
         self.setFixedSize(1000, 600)
-        self.setWindowFlag(Qt.WindowType.FramelessWindowHint)
         self.move_to_last_position()
 
         self.pushButton_RETURN_REFERENCE_MENU.clicked.connect(self.return_to_menu)

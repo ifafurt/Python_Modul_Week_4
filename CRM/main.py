@@ -1,13 +1,12 @@
-# main.py
 import sys
 import os
 import pandas as pd
-from PyQt6.QtWidgets import QApplication, QWidget
-from PyQt6.QtCore import QTimer, Qt, QPoint
-from PyQt6.QtGui import QPixmap
+from PyQt6.QtWidgets import QApplication, QWidget, QMainWindow, QLabel
+from PyQt6.QtCore import QTimer, Qt
+from PyQt6.QtGui import QPixmap, QIcon
 from PyQt6.uic import loadUi
 
-# ==== KLASÖR YOLLARI ==== #
+# Klasör yolları
 BASE_DIR = os.path.dirname(__file__)
 UI_DIR = os.path.join(BASE_DIR, "UI_s")
 IMG_DIR = os.path.join(UI_DIR, "logo")
@@ -41,21 +40,25 @@ class BaseWindow(QWidget):
             # İlk sefer için, mevcut konumu kaydet
             main.last_window_pos = self.pos()
 
+        self.setWindowIcon(QIcon("UI_s/logo/logo_icon.png"))
 
-# ==== SPLASH SCREEN ==== #
+
 class SplashScreen(BaseWindow):
     def __init__(self):
         super().__init__()
-        loadUi(os.path.join(UI_DIR, "Splash_Screen.ui"), self)
+        splash_ui_path = os.path.join(UI_DIR, "Splash_Screen.ui")
+        loadUi(splash_ui_path, self)
         self.setWindowTitle("CRM Splash Screen")
         self.setFixedSize(1000, 600)
-        self.setWindowFlag(Qt.WindowType.FramelessWindowHint)
         self.move_to_last_position()
 
+        # Logo yükleme
         logo_path = os.path.join(IMG_DIR, "logo_butun.png")
         if os.path.exists(logo_path):
             self.label_logo.setPixmap(QPixmap(logo_path))
             self.label_logo.setScaledContents(True)
+
+        
 
         self.counter = 0
         self.timer = QTimer()
@@ -75,24 +78,30 @@ class SplashScreen(BaseWindow):
         self.close()
 
 
-# ==== LOGIN WINDOW ==== #
 class LoginWindow(BaseWindow):
     def __init__(self):
         super().__init__()
-        loadUi(os.path.join(UI_DIR, "Login_Window.ui"), self)
+        login_ui_path = os.path.join(UI_DIR, "Login_Window.ui")
+        loadUi(login_ui_path, self)
         self.setWindowTitle("CRM Login")
         self.setFixedSize(1000, 600)
-        self.setWindowFlag(Qt.WindowType.FramelessWindowHint)
         self.move_to_last_position()
 
+        # Excel'den kullanıcıları oku
+        users_file = os.path.join(EXCEL_DIR, "users.xlsx")
+        if os.path.exists(users_file):
+            self.users_df = pd.read_excel(users_file)
+        else:
+            print("⚠️ Kullanıcı dosyası bulunamadı:", users_file)
+            self.users_df = pd.DataFrame(columns=["username", "password", "role"])
+
+        # Logo yükleme
         logo_path = os.path.join(IMG_DIR, "logo_butun.png")
-        if os.path.exists(logo_path):
+        if os.path.exists(logo_path) and hasattr(self, "label"):
             self.label.setPixmap(QPixmap(logo_path))
             self.label.setScaledContents(True)
 
-        users_file = os.path.join(EXCEL_DIR, "users.xlsx")
-        self.users_df = pd.read_excel(users_file)
-
+        # Buton bağlantıları
         self.pushButton_Exit.clicked.connect(self.close)
         self.pushButton_Login.clicked.connect(self.login)
 
@@ -130,7 +139,6 @@ class PreferenceAdminMenu(BaseWindow):
         loadUi(os.path.join(UI_DIR, "Preference_Admin_Menu.ui"), self)
         self.setWindowTitle("Admin Menu")
         self.setFixedSize(1000, 600)
-        self.setWindowFlag(Qt.WindowType.FramelessWindowHint)
         self.move_to_last_position()
 
         self.pushButton_INTERVIEWS.clicked.connect(self.open_interviews)
@@ -147,7 +155,7 @@ class PreferenceAdminMenu(BaseWindow):
         self.close()
 
     def open_applications(self):
-        from applications_page import ApplicationsWindow
+        from Applications import ApplicationsWindow     #applications_page yerine Applications olarak düzelttim
         self.app_window = ApplicationsWindow(role=self.role)
         self.app_window.show()
         self.close()
@@ -178,7 +186,6 @@ class PreferenceMenu(BaseWindow):
         loadUi(os.path.join(UI_DIR, "Preference_Menu.ui"), self)
         self.setWindowTitle("User Menu")
         self.setFixedSize(1000, 600)
-        self.setWindowFlag(Qt.WindowType.FramelessWindowHint)
         self.move_to_last_position()
 
         if hasattr(self, "pushButton_INTERVIEWS"):

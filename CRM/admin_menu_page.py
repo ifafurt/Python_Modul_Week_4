@@ -13,7 +13,6 @@ class AdminMenuWindow(BaseWindow):
         loadUi(os.path.join(UI_DIR, "Admin_Menu.ui"), self)
         self.setWindowTitle("Admin Menu")
         self.setFixedSize(1000, 600)
-        self.setWindowFlag(Qt.WindowType.FramelessWindowHint)
         self.move_to_last_position()
 
         self.pushButton_SEND_EMAIL.clicked.connect(self.send_email)

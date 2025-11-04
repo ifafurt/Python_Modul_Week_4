@@ -17,7 +17,6 @@ class InterviewsWindow(BaseWindow):
         loadUi(os.path.join(UI_DIR, "Interviews.ui"), self)
         self.setWindowTitle("Interviews")
         self.setFixedSize(1000, 600)
-        self.setWindowFlag(Qt.WindowType.FramelessWindowHint)
         self.move_to_last_position()
 
         # Butonları bağla
