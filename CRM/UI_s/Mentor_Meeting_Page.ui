@@ -194,9 +194,6 @@ QPushButton::pressed{
      <italic>true</italic>
     </font>
    </property>
-   <property name="focusPolicy">
-    <enum>Qt::ClickFocus</enum>
-   </property>
    <property name="styleSheet">
     <string notr="true">border-style:solid;
 border-width:3px;
@@ -280,27 +277,27 @@ QPushButton::pressed{
    </column>
    <column>
     <property name="text">
-     <string>Period</string>
+     <string>Applicant Name</string>
     </property>
    </column>
    <column>
     <property name="text">
-     <string>Full Name</string>
+     <string>Mentor Name</string>
     </property>
    </column>
    <column>
     <property name="text">
-     <string>Mentor</string>
+     <string>IT Knowledge Level</string>
     </property>
    </column>
    <column>
     <property name="text">
-     <string>Evaluation</string>
+     <string>Workload Level</string>
     </property>
    </column>
    <column>
     <property name="text">
-     <string>Current Status</string>
+     <string>Comments</string>
     </property>
    </column>
   </widget>
