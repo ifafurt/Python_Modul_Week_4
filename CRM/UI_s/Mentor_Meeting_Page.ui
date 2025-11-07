@@ -335,42 +335,42 @@ QPushButton:hover {
    </property>
    <item>
     <property name="text">
-     <string>It is appropriate to participate in the entire VIT project</string>
+     <string>VIT projesinin tamamına katılması uygun olur</string>
     </property>
    </item>
    <item>
     <property name="text">
-     <string>It is appropriate to receive initial IT training within the VIT project and be directed to ITPH</string>
+     <string>VIT projesi ilk IT eğitimi alıp ITPH a yönlendirilmesi uygun olur</string>
     </property>
    </item>
    <item>
     <property name="text">
-     <string>It is appropriate to receive English training within the VIT project and be directed to ITPH</string>
+     <string>VIT projesi ingilizce eğitimi alıp ITPH a yönlendirilmesi uygun olur</string>
     </property>
    </item>
    <item>
     <property name="text">
-     <string>It is appropriate to be directly directed to ITPH within the scope of the VIT project</string>
+     <string>VIT projesi kapsamında direkt ITPH a yönlendirilmesi uygun olur.</string>
     </property>
    </item>
    <item>
     <property name="text">
-     <string>It is appropriate to be directed to a job through individual coaching</string>
+     <string>Direkt bireysel koçluk ile işe yönlendirilmesi uygun olur</string>
     </property>
    </item>
    <item>
     <property name="text">
-     <string>It would be more appropriate to participate in the next VIT project</string>
+     <string>Bir sonraki VIT projesine katilmasi daha uygun olur</string>
     </property>
    </item>
    <item>
     <property name="text">
-     <string>Should be directed to another sector</string>
+     <string>Başka bir sektöre yönlendirilmeli</string>
     </property>
    </item>
    <item>
     <property name="text">
-     <string>Other</string>
+     <string>Diger</string>
     </property>
    </item>
   </widget>
