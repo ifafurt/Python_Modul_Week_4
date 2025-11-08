@@ -14,7 +14,6 @@ from PyQt6.QtWidgets import (
     QTableWidgetItem,
 )
 
-# ---- BaseWindow: main.py'den geliyorsa kullan, yoksa QWidget'e düş ----
 try:
     from main import BaseWindow  # proje içinden çalışırken
 except Exception:
@@ -59,9 +58,7 @@ class AdminMenuWindow(BaseWindow):
         self.pushButton_SEND_EMAIL.clicked.connect(self.send_email)
         self.pushButton_Return_TO_ADMIN_PREFERENCE_menu.clicked.connect(self.return_to_admin_pref_menu)
         self.pushButton_Exit.clicked.connect(self.close)
-
-        # --- Table hardening ---
-        # Kolon sayısı UI'da 4; başlıklar UI içinde zaten yazılı
+        
         self.tableWidget.setColumnCount(4)
         self.tableWidget.setSortingEnabled(False)
 
@@ -71,11 +68,6 @@ class AdminMenuWindow(BaseWindow):
     def register_event(self):
         """
         Excels/Event.ods içindeki ilk çalışma sayfasını okur ve tabloya basar.
-        Sütun beklenen sıra:
-            0: Event Name
-            1: Start Time
-            2: Participant Email
-            3: Organizer Email
         """
         ods_path = os.path.join(EXCEL_DIR, "Event.ods")
         if not os.path.exists(ods_path):
@@ -111,9 +103,7 @@ class AdminMenuWindow(BaseWindow):
                     item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
                     self.tableWidget.setItem(r, c, item)
 
-            # İstenirse başarı popup’ı gösterilebilir; sunum için sessiz bırakıyoruz.
-            # QMessageBox.information(self, "Success", "Events loaded successfully!")
-
+            
         except Exception as e:
             QMessageBox.critical(self, "Read Error", f"Failed to read ODS:\n{e}")
 
@@ -223,3 +213,4 @@ if __name__ == "__main__":
     w = AdminMenuWindow()
     w.show()
     sys.exit(app.exec())
+
