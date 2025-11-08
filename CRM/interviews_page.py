@@ -45,14 +45,13 @@ class InterviewsWindow(BaseWindow):
             QMessageBox.critical(self, "Dosya Hatası", f"Excel dosyası bulunamadı:\n{EXCEL_PATH}")
             self.df = pd.DataFrame()
 
-        # Normalize: ayrıca indekslenmiş küçük harfli isimlere erişim için bir yardımcı dict oluştur
-        # (orijinal sütun adlarını koruyoruz ancak lowercase anahtarlarla arama yapacağız)
+      
         self.col_map = {}
         if not self.df.empty:
             for c in self.df.columns:
                 self.col_map[c.strip().lower()] = c  # map: lowercase -> gerçek sütun adı
 
-        # Olası sütun isimlerini tespit et (Türkçe ve İngilizce olasılıkları)
+        # Olası sütun isimlerini tespit ediliyor (Türkçe ve İngilizce olasılıkları)
         self.name_col = self._pick_column(["full name", "adınız soyadınız", "adınız soyadınız", "ad soyad", "adiniz soyadiniz"])
         self.submitted_col = self._pick_column(["submitted project", "proje gonderilis tarihi", "proje gönderiliş tarihi", "project submitted", "submitted"])
         self.received_col = self._pick_column(["received project", "projenin gelis tarihi", "proje gelis tarihi", "received"])
@@ -110,7 +109,7 @@ class InterviewsWindow(BaseWindow):
         filtered = self.df[mask]
         if filtered.empty:
             QMessageBox.information(self, "No Results ", f"No names starting with '{text}' were found.")
-            # istersen tümünü gösterme, şu an sadece uyarı
+          
         else:
             self.fill_table(filtered)
 
@@ -187,4 +186,5 @@ if __name__ == "__main__":
     w = InterviewsWindow(role="admin")
     w.show()
     sys.exit(app.exec())
+
 
