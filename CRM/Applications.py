@@ -51,20 +51,20 @@ class ApplicationsWindow(BaseWindow):
         # Butonlara fonksiyon bağla
         self.pushButton_SEARCH.clicked.connect(self.search_applications)
         self.lineEdit.textChanged.connect(self.search_applications)  # CANLI ARAMA
-        self.pushButton_ALL_APPLICATIONS.clicked.connect(self.load_all_applications)
         self.pushButton_ALL_APPLICATIONS.clicked.connect(self.clear_search_input)
-        self.pushButton_DEFINED_MENTOR_MEETING.clicked.connect(self.show_defined_mentor)
+        self.pushButton_ALL_APPLICATIONS.clicked.connect(self.load_all_applications)
         self.pushButton_DEFINED_MENTOR_MEETING.clicked.connect(self.clear_search_input)
-        self.pushButton_UNDEFINED_MENTOR_MEETING.clicked.connect(self.show_undefined_mentor)
+        self.pushButton_DEFINED_MENTOR_MEETING.clicked.connect(self.show_defined_mentor)
         self.pushButton_UNDEFINED_MENTOR_MEETING.clicked.connect(self.clear_search_input)
-        self.pushButton_DUPLICATE_REGISTRATION.clicked.connect(self.show_duplicates)
+        self.pushButton_UNDEFINED_MENTOR_MEETING.clicked.connect(self.show_undefined_mentor)
         self.pushButton_DUPLICATE_REGISTRATION.clicked.connect(self.clear_search_input)
-        self.pushButton_PREVIOUS_VIT_CHECK.clicked.connect(self.show_previous_vit)
+        self.pushButton_DUPLICATE_REGISTRATION.clicked.connect(self.show_duplicates)
         self.pushButton_PREVIOUS_VIT_CHECK.clicked.connect(self.clear_search_input)
-        self.pushButton_DIFFERENT_REGISTRATION.clicked.connect(self.show_different)
+        self.pushButton_PREVIOUS_VIT_CHECK.clicked.connect(self.show_previous_vit)
         self.pushButton_DIFFERENT_REGISTRATION.clicked.connect(self.clear_search_input)
-        self.pushButton_APPLICATION_FILTERING.clicked.connect(self.filter_applications)
+        self.pushButton_DIFFERENT_REGISTRATION.clicked.connect(self.show_different)
         self.pushButton_APPLICATION_FILTERING.clicked.connect(self.clear_search_input)
+        self.pushButton_APPLICATION_FILTERING.clicked.connect(self.filter_applications)        
         self.pushButton_RETURN_REFERENCE_MENU.clicked.connect(self.return_to_menu)
 
     # ---------------- Fonksiyonlar ---------------- #
@@ -206,3 +206,4 @@ if __name__ == "__main__":
     window = ApplicationsWindow(role="admin")
     window.show()
     sys.exit(app.exec())
+
