@@ -1,47 +1,41 @@
 
-#admin_menu_page.py 
-
 import os
 import sys
 import smtplib
 from email.mime.text import MIMEText
+import pandas as pd
 
 from PyQt6.uic import loadUi
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QApplication,
     QMessageBox,
-    QTableWidgetItem,
+    QTableWidgetItem
 )
 
 try:
-    from main import BaseWindow  # proje içinden çalışırken
+    from main import BaseWindow
 except Exception:
-    from PyQt6.QtWidgets import QWidget as BaseWindow  # tek başına koşarken
-
-# ---- ODS okuma için odfpy ----
-from odf.opendocument import load as odf_load
-from odf.table import Table, TableRow, TableCell
-from odf.text import P
+    from PyQt6.QtWidgets import QWidget as BaseWindow
 
 
 BASE_DIR = os.path.dirname(__file__)
 UI_DIR = os.path.join(BASE_DIR, "UI_s")
-EXCEL_DIR = os.path.join(BASE_DIR, "Excels")  # Event.ods burada olmalı
+EXCEL_DIR = os.path.join(BASE_DIR, "Excels")  # Event.xlsx burada olacak
 
 
 class AdminMenuWindow(BaseWindow):
-    def __init__(self, role: str = "admin"):
+    def __init__(self, role="admin"):
         super().__init__()
+
         ui_path = os.path.join(UI_DIR, "Admin_Menu.ui")
 
-        # UI yükle (sessiz çökme yaşanmaması için try/except)
         try:
             loadUi(ui_path, self)
         except Exception as e:
             QMessageBox.critical(
                 self, "UI Load Error",
-                f"Failed to load UI file:\n{ui_path}\n\n{e}"
+                f"Failed to load UI:\n{ui_path}\n\n{e}"
             )
             raise
 
@@ -49,94 +43,82 @@ class AdminMenuWindow(BaseWindow):
         self.setWindowTitle("Admin Menu")
         self.setFixedSize(1000, 600)
         self.setWindowFlag(Qt.WindowType.FramelessWindowHint)
-        # BaseWindow varsa pencere konumunu korur
+
         if hasattr(self, "move_to_last_position"):
             self.move_to_last_position()
 
-        # --- Buttons ---
+        # --- Button connections ---
         self.pushButton_EVENT_REGISTRATION.clicked.connect(self.register_event)
         self.pushButton_SEND_EMAIL.clicked.connect(self.send_email)
         self.pushButton_Return_TO_ADMIN_PREFERENCE_menu.clicked.connect(self.return_to_admin_pref_menu)
         self.pushButton_Exit.clicked.connect(self.close)
-        
-        self.tableWidget.setColumnCount(4)
-        self.tableWidget.setSortingEnabled(False)
 
-    # =========================
-    # 1) ODS → tabloya yükle
-    # =========================
+        self.tableWidget.setColumnCount(4)
+
+
+   
+    # 1) Excel (Event.xlsx) → Tabloya yükleme
+    
     def register_event(self):
-        """
-        Excels/Event.ods içindeki ilk çalışma sayfasını okur ve tabloya basar.
-        """
-        ods_path = os.path.join(EXCEL_DIR, "Event.ods")
-        if not os.path.exists(ods_path):
-            QMessageBox.warning(self, "Missing File", f"Event.ods not found:\n{ods_path}")
+        excel_path = os.path.join(EXCEL_DIR, "Event.xlsx")
+
+        if not os.path.exists(excel_path):
+            QMessageBox.warning(self, "Missing File", f"Event.xlsx not found:\n{excel_path}")
             return
 
         try:
-            doc = odf_load(ods_path)
-            table = doc.spreadsheet.getElementsByType(Table)[0]
+            df = pd.read_excel(excel_path)
 
-            rows = []
-            for row in table.getElementsByType(TableRow):
-                vals = []
-                for cell in row.getElementsByType(TableCell):
-                    # ODS hücresindeki tüm <text:p> satırlarını birleştir
-                    txt_parts = [str(p) for p in cell.getElementsByType(P)]
-                    vals.append(" ".join(txt_parts).strip())
-                # Satırda tamamen boş olmayan bir değer varsa ekle
-                if any(v.strip() for v in vals):
-                    rows.append(vals)
+            required_columns = [
+                "EVENT NAME",
+                "START TIME",
+                "PARTICIPANT E-MAIL",
+                "ORGANIZER E-MAIL"
+            ]
 
-            # İlk satır başlık ise at (başlık kontrolü gevşek)
-            if rows and self._looks_like_header(rows[0]):
-                rows = rows[1:]
+            for col in required_columns:
+                if col not in df.columns:
+                    QMessageBox.critical(
+                        self,
+                        "Column Error",
+                        f"Missing column in Event.xlsx:\n'{col}'"
+                    )
+                    return
 
-            # Tabloya yaz
-            self.tableWidget.clearContents()
-            self.tableWidget.setRowCount(len(rows))
-            for r, row_vals in enumerate(rows):
-                for c in range(4):
-                    text = row_vals[c] if c < len(row_vals) else ""
-                    item = QTableWidgetItem(text)
-                    item.setFlags(Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable)
-                    self.tableWidget.setItem(r, c, item)
+            self.tableWidget.setRowCount(0)
 
-            
+            for row_idx, row in df.iterrows():
+                self.tableWidget.insertRow(row_idx)
+                self.tableWidget.setItem(row_idx, 0, QTableWidgetItem(str(row["EVENT NAME"])))
+                self.tableWidget.setItem(row_idx, 1, QTableWidgetItem(str(row["START TIME"])))
+                self.tableWidget.setItem(row_idx, 2, QTableWidgetItem(str(row["PARTICIPANT E-MAIL"])))
+                self.tableWidget.setItem(row_idx, 3, QTableWidgetItem(str(row["ORGANIZER E-MAIL"])))
+
         except Exception as e:
-            QMessageBox.critical(self, "Read Error", f"Failed to read ODS:\n{e}")
+            QMessageBox.critical(self, "Excel Error", f"Failed to read Event.xlsx:\n{e}")
 
-    def _looks_like_header(self, first_row):
-        header_tokens = ["event", "name", "start", "time", "email", "participant", "organizer"]
-        joined = " ".join(first_row).lower()
-        return any(tok in joined for tok in header_tokens)
 
-    # =========================
-    # 2) Gerçek e-posta gönder
-    # =========================
+    # 2-Gerçek Mail Gönderme (Gmail App Password gerekli)
+  
     def send_email(self):
-        """
-        Tablo satırlarını dolaşır; 2. ve 3. sütundaki adreslere
-        etkinlik adına göre basit bir bilgilendirme maili yollar.
-        Gmail ile çalışır: 2-Adımlı Doğrulama açık + App Password gerekli.
-        """
         rows = self.tableWidget.rowCount()
+
         if rows == 0:
             QMessageBox.warning(self, "No Data", "No events loaded.")
             return
 
-        # ---- SMTP ayarlarını BURAYA koy ----
         SMTP_SERVER = "smtp.gmail.com"
         SMTP_PORT = 587
-        SENDER_EMAIL = "your_email@gmail.com"       # <-- kendi adresin
-        SENDER_PASSWORD = "your_app_password"       # <-- Gmail App Password
 
-        # Basit doğrulama
-        if "your_email" in SENDER_EMAIL or "your_app_password" in SENDER_PASSWORD:
+        #  BURAYI KENDİ GMAIL HESABINLA DOLDURACAKSIN
+        SENDER_EMAIL = "your_email@gmail.com"
+        SENDER_PASSWORD = "your_app_password"  # Gmail App Password
+
+        if "your_email" in SENDER_EMAIL:
             QMessageBox.warning(
-                self, "Setup Required",
-                "Please set SENDER_EMAIL and SENDER_PASSWORD (Gmail App Password)."
+                self,
+                "Setup Needed",
+                "Please set your Gmail address and App Password in the code."
             )
             return
 
@@ -145,72 +127,81 @@ class AdminMenuWindow(BaseWindow):
             server.starttls()
             server.login(SENDER_EMAIL, SENDER_PASSWORD)
 
-            total_sent = 0
+            sent_count = 0
 
             for r in range(rows):
-                event_name = self._safe_item_text(r, 0)
-                participant = self._safe_item_text(r, 2)
-                organizer = self._safe_item_text(r, 3)
+                event_name = self._safe(r, 0)
+                participant = self._safe(r, 2)
+                organizer = self._safe(r, 3)
 
-                # adresleri virgül/ noktalı virgül ile ayırmayı destekle
-                targets = []
-                targets += self._split_emails(participant)
-                targets += self._split_emails(organizer)
+                emails = self._split_emails(participant) + self._split_emails(organizer)
 
-                if not targets:
+                if not emails:
                     continue
 
                 msg = MIMEText(
                     f"Hello,\n\nThis is a reminder for the event:\n\n"
-                    f"  {event_name}\n\n"
-                    f"Best regards,\nCRM Bot"
+                    f"{event_name}\n\nBest regards,\nCRM System"
                 )
                 msg["Subject"] = f"Event Reminder – {event_name}"
                 msg["From"] = SENDER_EMAIL
 
-                for to_addr in targets:
-                    msg["To"] = to_addr
-                    server.sendmail(SENDER_EMAIL, to_addr, msg.as_string())
-                    total_sent += 1
+                for email in emails:
+                    msg["To"] = email
+                    server.sendmail(SENDER_EMAIL, email, msg.as_string())
+                    sent_count += 1
 
             server.quit()
-            QMessageBox.information(self, "Emails Sent", f"Successfully sent {total_sent} email(s).")
 
-        except smtplib.SMTPAuthenticationError as e:
+            QMessageBox.information(self, "Success", f"Emails sent: {sent_count}")
+
+        except smtplib.SMTPAuthenticationError:
             QMessageBox.critical(
-                self, "Auth Error",
-                "SMTP authentication failed.\n\n"
-                "Gmail için:\n"
-                "1) Google hesabında 2-Adımlı Doğrulama açık olmalı\n"
-                "2) App Password oluşturup SENDER_PASSWORD olarak kullanmalısın.\n\n"
-                f"Details:\n{e}"
+                self,
+                "Authentication Error",
+                "Gmail blocked the login.\n"
+                "You MUST use a Gmail App Password:\n"
+                "Google Account → Security → App Passwords."
             )
         except Exception as e:
-            QMessageBox.critical(self, "Email Error", f"Failed to send emails:\n{e}")
+            QMessageBox.critical(self, "Email Error", str(e))
 
-    def _safe_item_text(self, row: int, col: int) -> str:
-        it = self.tableWidget.item(row, col)
-        return it.text().strip() if it else ""
 
-    def _split_emails(self, raw: str) -> list[str]:
-        if not raw:
+    def _safe(self, r, c):
+        item = self.tableWidget.item(r, c)
+        return item.text().strip() if item else ""
+
+    def _split_emails(self, text):
+        if not text:
             return []
-        # virgül veya noktalı virgül ile ayır
-        parts = [p.strip() for p in raw.replace(";", ",").split(",")]
-        # boşları ayıkla, çok basit bir '@' kontrolü
-        return [p for p in parts if p and "@" in p]
-    
-    def return_to_admin_pref_menu(self):
-        from main import PreferenceAdminMenu
-        self.pref_menu = PreferenceAdminMenu(role=self.role)
-        self.pref_menu.show()
-        self.close()
-    
+        parts = [p.strip() for p in text.replace(";", ",").split(",")]
+        return [p for p in parts if "@" in p]
 
-# ---- Tek başına çalıştırma (runner) ----
+
+    # RETURN — Admin Preference Menu’ye geri dön
+   
+    def return_to_admin_pref_menu(self):
+        try:
+            from main import PreferenceAdminMenu
+        except ImportError:
+            try:
+                from __main__ import PreferenceAdminMenu
+            except ImportError:
+                QMessageBox.warning(self, "Return Error",
+                                    "Cannot return — main module not found.")
+                return
+
+        window = PreferenceAdminMenu(role=self.role)
+        window.show()
+        self.close()
+
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     w = AdminMenuWindow()
     w.show()
     sys.exit(app.exec())
+
+
 
