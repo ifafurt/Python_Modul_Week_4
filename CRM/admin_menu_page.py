@@ -179,21 +179,25 @@ class AdminMenuWindow(BaseWindow):
 
 
     # RETURN — Admin Preference Menu’ye geri dön
-   
     def return_to_admin_pref_menu(self):
+    # 1) Normal durumda: proje main.py'den çalışınca
         try:
             from main import PreferenceAdminMenu
         except ImportError:
+        # 2) Python main.py'yi __main__ olarak çalıştırdıysa burası devreye girer
             try:
                 from __main__ import PreferenceAdminMenu
             except ImportError:
-                QMessageBox.warning(self, "Return Error",
-                                    "Cannot return — main module not found.")
-                return
-
-        window = PreferenceAdminMenu(role=self.role)
-        window.show()
+                QMessageBox.warning(
+                    self,
+                    "Return Error",
+                    "Cannot return to previous menu because main module was not found."
+            )
+            return
+        self.new_window = PreferenceAdminMenu(role=self.role)  # REFERANS ÖNEMLİ
+        self.new_window.show()
         self.close()
+   
 
 
 
